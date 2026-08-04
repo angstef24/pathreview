@@ -31,3 +31,21 @@ I called `ResumeParser._detect_sections()` directly with two versions of the sam
 
 **Blockers or open questions:**
 Still need to confirm whether real-world PDF extraction ever uses tabs or non-breaking spaces for indentation (vs. plain spaces), which would affect how permissive the fixed regex needs to be.
+
+
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+The fix from PLAN.md is implemented. I rewrote the pattern list in `_detect_sections()` (`ingestion/parsers/resume_parser.py`) so the header regexes use `^[ \t]*`/`\n[ \t]*` instead of anchoring directly on `^`/`\n`, which lets indented and PDF-extracted headers (e.g. `    Education:`) match.
+
+Completed PLAN.md sub-tasks:
+1. Fixed `_detect_sections()` to allow leading whitespace before a header.
+2. Confirmed the three originally-failing tests now pass: `test_detect_sections`, `test_parse_single_column_resume_text`, `test_parse_resume_no_work_experience`.
+
+**Next steps:**
+Add/update unit tests covering the indentation fix (per PLAN.md's sub-tasks 3–4: an indented-header case and a guard against misdetecting indented body text as a header), run `make check` on the changed files and fix any issues, open a draft PR against pathreview and request peer feedback in Slack, fill in the PR template, then mark it ready for review and add Check-in 2.
+
+**Blockers:**
+No major blockers. It may take some time to get the PR reviewed. Note: `make test-unit` has ~50 pre-existing failures across unrelated modules (`review_service`, `pii_scrubber`, `skill_extractor`, etc.) that exist on a clean checkout before my changes. My changes don't touch those; I confirmed the resume-parser suite goes from 5 failing to 2 failing, where the remaining 2 (`test_parse_markdown_resume`, `test_strip_markdown_syntax`) are pre-existing failures in `_strip_markdown`, unrelated to issue #147.
