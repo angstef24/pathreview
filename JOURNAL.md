@@ -49,3 +49,25 @@ Add/update unit tests covering the indentation fix (per PLAN.md's sub-tasks 3–
 
 **Blockers:**
 No major blockers. It may take some time to get the PR reviewed. Note: `make test-unit` has ~50 pre-existing failures across unrelated modules (`review_service`, `pii_scrubber`, `skill_extractor`, etc.) that exist on a clean checkout before my changes. My changes don't touch those; I confirmed the resume-parser suite goes from 5 failing to 2 failing, where the remaining 2 (`test_parse_markdown_resume`, `test_strip_markdown_syntax`) are pre-existing failures in `_strip_markdown`, unrelated to issue #147.
+
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** https://github.com/ascherj/pathreview/pull/723
+
+**Branch:** fix/147-resume-section-detection-fails-on-text-with-leading-whitespace
+
+**What you built:**
+Updated the four regex patterns in `_detect_sections()` (`ingestion/parsers/resume_parser.py`) to allow optional leading whitespace (`[ \t]*`) before a section header, so resumes with indented/PDF-extracted headers (e.g. `    Experience`) are correctly detected instead of returning no sections at all.
+
+**Tests added or updated:**
+Added `test_detect_sections_with_leading_whitespace` and `test_detect_sections_does_not_match_indented_body_text` to `tests/unit/test_resume_parser.py` — one confirms indented headers are detected, the other guards against indented body text that merely mentions a header word being misdetected as one.
+
+**Self-review confirmation:** [X] make check passes  [X] make test-unit passes
+(Both "pass" in the sense that my changes introduce no new failures beyond this repo's pre-existing baseline — documented in the PR description: `make test-unit` goes from 53 failing/375 passing to 50 failing/380 passing, and `make lint` goes from 182 to 177 pre-existing errors; `make typecheck` is unaffected.)
+
+**Draft PR feedback received from:** none yet
+
+**Blockers or open questions:**
+None currently. The `_strip_markdown()` header-stripping bug (same "no leading whitespace" root cause, different method) is still unfixed and causing 2 pre-existing test failures — flagged in the PR as a possible follow-up issue, out of scope for #147.
