@@ -71,3 +71,36 @@ Added `test_detect_sections_with_leading_whitespace` and `test_detect_sections_d
 
 **Blockers or open questions:**
 None currently. The `_strip_markdown()` header-stripping bug (same "no leading whitespace" root cause, different method) is still unfixed and causing 2 pre-existing test failures — flagged in the PR as a possible follow-up issue, out of scope for #147.
+
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes  [X] No — still awaiting review
+(Su26 note: reviewer feedback isn't a feature this term, so there's nothing to check the PR for beyond confirming it — no comments have come in on PR #723.)
+
+**Summary of feedback:**
+No review came in.
+
+**How you responded:**
+N/A — no feedback to respond to.
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+The actual regex fix was the easy part with most of the friction was environment and process. Getting Docker Desktop running (installing via Homebrew, then realizing it had to actually be launched once before `docker compose` even existed as a command) took longer than the bug fix itself. I also didn't understand `origin` vs `upstream` going in, and I got nervous the first time a push happened, thinking it was going to the real project, before realizing `origin` was my own fork the whole time. The other surprise was how much of my time went into pre-commit hooks failing on code I hadn't touched (a missing `raise ... from e` and untyped test functions that predated my change) rather than on my actual fix.
+
+**What did you learn about working in a large codebase?**
+The biggest shift was realizing a codebase doesn't need to be fully green for a contribution to be valid. This repo had 53 pre-existing failing tests and 182 pre-existing lint errors before I changed anything. The bar is "don't make it worse," not "fix everything you see," which is a different mindset than a solo project where you'd expect a clean test run. I also learned that the same bug pattern can hide in more than one place. `_strip_markdown()` had the identical "no leading whitespace" flaw as `_detect_sections()` — and part of the job is staying disciplined about what's actually in scope for the issue instead of fixing everything you notice.
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for diagnosing failures quickly like figuring out why a pre-commit hook failed, tracing a test failure back to its root cause across files, and reproducing the bug directly instead of guessing. It also helped me get PLAN.md, JOURNAL.md, and the PR description into the format the course/repo actually wanted. The only place it really fell short for me was that it couldn't install Docker Desktop or click through its setup for me.
+
+**What would you do differently if you started over?**
+I'd get the fork/branch/remote mental model straight before starting, instead of mid-way through Week 8. I'd also read CONTRIBUTING.md's commit message convention before my first commit rather than after several were already pushed, I ended up with commits that don't match the required `type(scope): description` format.
+
+**What are you most proud of from this module?**
+Reproducing a bug reliably before touching any code, and proving with numbers (53→50 failing, 182→177 lint errors) that my fix didn't regress anything else in a codebase I'd never seen before Week 7. That verification step felt like the real skill this module was trying to teach, more than the one-line regex change itself.
